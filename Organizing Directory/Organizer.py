@@ -10,7 +10,7 @@ sort = True
 class FileOrganizer:
     def __init__(self, directory):
         self.directory = directory
-        self.invalid_folders = ["Shortcuts - Sorter", "PNG Files - Sorter", "MP4 Files - Sorter", "Text Files - Sorter", "FBX Files - Sorter"]
+        self.invalid_folders = ["Shortcuts - Sorter", "Picture Files - Sorter", "MP4 Files - Sorter", "Text Files - Sorter", "FBX and OBJ Files - Sorter", "Blend Files - Sorter"]
         self.move_results = []
         self.total_changes = 0
 
@@ -34,14 +34,16 @@ class FileOrganizer:
                 file_extension = os.path.splitext(file)[1].lower()
                 if file_extension == ".lnk":
                     self.move_file(file, self.invalid_folders[0])
-                elif file_extension == ".png":
+                elif file_extension == ".png" or file_extension == ".jpg" or file_extension == ".jpeg" or file_extension == ".bmp" :
                     self.move_file(file, self.invalid_folders[1])
                 elif file_extension == ".mp4":
                     self.move_file(file, self.invalid_folders[2])
                 elif file_extension == ".txt":
                     self.move_file(file, self.invalid_folders[3])
-                elif file_extension == ".fbx":
+                elif file_extension == ".fbx" or file_extension == ".obj":
                     self.move_file(file, self.invalid_folders[4])
+                elif file_extension == ".blend" or file_extension == ".blend1":
+                    self.move_file(file, self.invalid_folders[5])
 
     def move_file(self, file, destination_folder):
         src_path = os.path.join(self.directory, file)
