@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 
 show_console = False
-sort = False
+sort = True
 
 class FileOrganizer:
     def __init__(self, directory):
@@ -55,8 +55,9 @@ class FileOrganizer:
         now = datetime.now()
 
         current_time = now.strftime("%H %M %S")
+        current_date = now.strftime("%D").replace("/", " ")
         
-        with open(os.path.join(self.directory, f"Move File Results {current_time}.txt"), "w") as file:
+        with open(os.path.join(self.directory, f"Move File Results {current_date} {current_time}.txt"), "w") as file:
             for move_result in self.move_results:
                 file.write(move_result + "\n")
 
