@@ -32,7 +32,7 @@ class FileOrganizer:
         for file in files:
             if os.path.isfile(file):
                 file_extension = os.path.splitext(file)[1].lower()
-                if file_extension == ".lnk":
+                if file_extension == ".lnk" or file_extension == ".url":
                     self.move_file(file, self.invalid_folders[0])
                 elif file_extension == ".png" or file_extension == ".jpg" or file_extension == ".jpeg" or file_extension == ".bmp" :
                     self.move_file(file, self.invalid_folders[1])
@@ -59,9 +59,12 @@ class FileOrganizer:
         current_time = now.strftime("%H %M %S")
         current_date = now.strftime("%D").replace("/", " ")
         
-        with open(os.path.join(self.directory, f"Move File Results {current_date} {current_time}.txt"), "w") as file:
+        file_path = os.path.join(self.directory, f"Move File Results {current_date} {current_time}.txt")
+        with open(file_path, "w", encoding="utf-8-sig") as file:
             for move_result in self.move_results:
                 file.write(move_result + "\n")
+
+        print(f"Move File Results saved to: {file_path}")
 
     def normalize_path(self, path):
         return path.strip().rstrip(os.sep)
@@ -73,13 +76,15 @@ class FileOrganizer:
             print("Revert cannot be performed. The file was not found.")
             return
 
-        with open(move_results_file, "r") as file:
+        with open(move_results_file, "r", encoding="utf-8-sig") as file:
             lines = file.readlines()
 
         for line in lines:
             match = re.search(r'(.+) was moved from (.+) to (.+)', line)
             if match:
                 file_name, prev_location, next_location = match.groups()
+                # Remove the BOM (if present) from the file name
+                file_name = file_name.lstrip('\ufeff')
                 dest_path = os.path.join(self.directory, prev_location)
                 src_path = os.path.join(self.directory, next_location, file_name)
 
@@ -109,7 +114,6 @@ if __name__ == "__main__":
             file_organizer.organize_files()
             file_organizer.save_move_results()
             print("File organization completed successfully!")
-            print("A file named 'Move File Results.txt' has been saved.")
             print("DO NOT DELETE THIS FILE OR MAKE ANY CHANGES TO IT IF YOU WANT TO UNDO THIS")
         else:
             file_organizer.revert_file_changes()
